@@ -46,6 +46,18 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 });
 
 const PORT = config.port;
-app.listen(PORT, () => {
+
+const server = app.listen(PORT, () => {
   console.log(`SA Tourism API running on port ${PORT} (${config.apiBase})`);
+});
+
+server.on('error', (err: NodeJS.ErrnoException) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(
+      `Port ${PORT} already in use – free it or set the PORT environment variable to a different value.`
+    );
+  } else {
+    console.error('Server error:', err);
+  }
+  process.exit(1);
 });
