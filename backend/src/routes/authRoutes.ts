@@ -1,0 +1,17 @@
+import { Router } from 'express';
+import { upload } from '../middleware/upload.js';
+import { authenticate, requireRole } from '../middleware/auth.js';
+import { validateBody } from '../middleware/validate.js';
+import { login, registerBusiness, forgotPassword, resetPassword, me } from '../controllers/authController.js';
+import { loginSchema, registerBusinessSchema, forgotPasswordSchema, resetPasswordSchema } from '../validations/auth.js';
+
+const router = Router();
+
+router.post('/login', validateBody(loginSchema), login);
+router.post('/register', upload.fields([{ name: 'permitFile', maxCount: 1 }, { name: 'validIdFile', maxCount: 1 }]), validateBody(registerBusinessSchema), registerBusiness);
+router.post('/forgot-password', validateBody(forgotPasswordSchema), forgotPassword);
+router.post('/reset-password', validateBody(resetPasswordSchema), resetPassword);
+
+router.get('/me', authenticate, me);
+
+export default router;
